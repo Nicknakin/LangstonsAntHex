@@ -173,7 +173,7 @@ function main(){
         grid.addAnt(Math.floor(Math.random()*width), Math.floor(Math.random()*height), getRandomColor());
     }
     clearInterval(interval);
-    interval = setInterval(loop, Hz);
+    interval = setInterval(loop, 1000/Hz);
 }
 
 function looploop(){
