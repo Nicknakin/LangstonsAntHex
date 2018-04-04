@@ -1,7 +1,7 @@
 class Cell{
     constructor(x, y, r, state, color){
-        this.x = Math.round(x);
-        this.y = Math.round(y);
+        this.x = (x);
+        this.y = (y);
         this.r = r;
         this.state = (state)? true: false;
         this.color = (color)? color: defaultColor;
@@ -35,8 +35,8 @@ class Ant{
     //5 W   i = i;  k -= 1; 
 
     constructor(i, k, color, dir, cell){
-        this.i = k;
-        this.k = i;
+        this.i = i;
+        this.k = k;
         this.x = cell.x;
         this.y = cell.y;
         this.size = cell.r/3*2;
@@ -117,7 +117,7 @@ class Grid{
     }
 
     addAnt(x, y, c, d){
-        this.ants.push(new Ant(x,y,c,d,this.cells[y][x]));
+        this.ants.push(new Ant(y,x,c,d,this.cells[y][x]));
     }
 
     moveAnts(){
@@ -149,8 +149,8 @@ var grid;
 var interval;
 var width = 115;
 var height = 101;
-var numAnts = 100;
-var Hz = 1000;
+var numAnts = 2;
+var Hz = 60;
 var numSteps = 200;
 
 function fillHexagon(x, y, r, a){
@@ -170,7 +170,7 @@ function fillPolygon(x, y, r, s, a){
 function main(){
     grid = new Grid(width, height,5);
     for(let i = 0; i < numAnts; i++){
-        grid.addAnt(Math.floor(Math.random()*width), Math.round(Math.random()*height), getRandomColor());
+        grid.addAnt(Math.floor(Math.random()*width), Math.floor(Math.random()*height), getRandomColor());
     }
     clearInterval(interval);
     interval = setInterval(loop, Hz);
