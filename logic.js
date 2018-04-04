@@ -39,7 +39,7 @@ class Ant{
         this.k = k;
         this.x = cell.x;
         this.y = cell.y;
-        this.size = cell.r/3*2;
+        this.size = cell.r*Math.sqrt(3)/3;
         this.color = (color)? color: "white";
         this.dir = (dir)? dir: 0;
     }
@@ -101,9 +101,9 @@ class Grid{
         this.height = height;
         this.size = size;
         this.cells = new Array(height);
-        let orth = this.size*Math.sin(Math.PI/3);
-        let xDiff = 2*this.size*Math.cos(Math.PI/6);
-        let yDiff = this.size+this.size*Math.sin(Math.PI/6);
+        let orth = size*Math.sin(Math.PI/3);
+        let xDiff = size*Math.sqrt(3);
+        let yDiff = size*1.5;
         for(let i = 0; i < this.cells.length; i++){
             this.cells[i] = new Array(width);
             for(let k = 0; k < this.cells[i].length; k++){
@@ -136,7 +136,7 @@ class Grid{
             }
         }
         for(let i = 0; i < this.ants.length; i++){
-            temp.push(this.ants[i]);
+            //temp.push(this.ants[i]);
         }
         return temp;
     }
@@ -147,11 +147,11 @@ var ctx = canvas.getContext("2d");
 var defaultColor = "BLACK";
 var grid;
 var interval;
-var width = 58;
-var height = 51;
+var width = 40;
+var height = 41;
 var numAnts = 2;
 var Hz = 60;
-var numSteps = 200;
+var numSteps = 10;
 
 function fillHexagon(x, y, r, a){
     fillPolygon(x,y,r,6,a);
@@ -169,12 +169,12 @@ function fillPolygon(x, y, r, s, a){
 
 function main(){
     ctx.clearRect(0,0,canvas.width, canvas.height);
-    grid = new Grid(width, height,10);
+    grid = new Grid(width, height,10/Math.sqrt(3)*2);
     for(let i = 0; i < numAnts; i++){
-        grid.addAnt(Math.floor(Math.random()*width), Math.floor(Math.random()*height), getRandomColor());
+        grid.addAnt(Math.floor(Math.random()*width), Math.floor(Math.random()*height), getRandomColor(), Math.floor(Math.random()*6));
     }
     clearInterval(interval);
-    interval = setInterval(loop, 1000/Hz);
+    interval = setInterval(looploop, 1000/Hz);
 }
 
 function looploop(){
