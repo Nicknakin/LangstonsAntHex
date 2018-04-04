@@ -39,7 +39,7 @@ class Ant{
         this.k = k;
         this.x = cell.x;
         this.y = cell.y;
-        this.size = cell.r*Math.sqrt(3)/3;
+        this.size = cell.r/5;
         this.color = (color)? color: "white";
         this.dir = (dir)? dir: 0;
     }
@@ -136,7 +136,7 @@ class Grid{
             }
         }
         for(let i = 0; i < this.ants.length; i++){
-            //temp.push(this.ants[i]);
+            temp.push(this.ants[i]);
         }
         return temp;
     }
