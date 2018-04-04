@@ -136,7 +136,7 @@ function drawPolygon(x, y, r, s){
 }
 
 function main(){
-    grid = new Grid(10,10,20);
+    grid = new Grid(10,10,50);
     let draws = grid.getDrawables();
     for(let i = 0; i < draws.length; i++){
         draws[i].draw();
