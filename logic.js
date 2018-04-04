@@ -147,8 +147,8 @@ var ctx = canvas.getContext("2d");
 var defaultColor = "BLACK";
 var grid;
 var interval;
-var width = 55;
-var height = 11;
+var width = 58;
+var height = 51;
 var numAnts = 2;
 var Hz = 60;
 var numSteps = 200;
@@ -168,6 +168,7 @@ function fillPolygon(x, y, r, s, a){
 }
 
 function main(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
     grid = new Grid(width, height,10);
     for(let i = 0; i < numAnts; i++){
         grid.addAnt(Math.floor(Math.random()*width), Math.floor(Math.random()*height), getRandomColor());
