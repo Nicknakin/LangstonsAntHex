@@ -1,7 +1,7 @@
 class Cell{
     constructor(x, y, r, state, color){
-        this.x = x;
-        this.y = y;
+        this.x = Math.round(x);
+        this.y = Math.round(y);
         this.r = r;
         this.state = (state)? true: false;
         this.color = (color)? color: defaultColor;
@@ -12,7 +12,7 @@ class Cell{
         if(this.toDraw){
             let temp = ctx.fillStyle;
             ctx.fillStyle = this.color;
-            fillHexagon(this.x, this.y, this.r);
+            fillHexagon(this.x, this.y, this.r, Math.PI/2);
             ctx.fillStyle = temp;
             this.toDraw = false;
         }
@@ -34,11 +34,20 @@ class Ant{
     //4 SW  i += 1; k = k-(i%2);
     //5 W   i = i;  k -= 1; 
 
-    constructor(i, k, color, dir){
-        this.i = i;
-        this.k = k;
+    constructor(i, k, color, dir, cell){
+        this.i = k;
+        this.k = i;
+        this.x = cell.x;
+        this.y = cell.y;
+        this.size = cell.r/3*2;
         this.color = (color)? color: "white";
         this.dir = (dir)? dir: 0;
+    }
+
+    draw(){
+        let temp = ctx.fillStyle;
+        ctx.fillStyle = this.color;
+        fillPolygon(this.x, this.y, this.size, 3, ((this.dir+2)%6)*Math.PI/3);
     }
 
     move(cell){
@@ -49,18 +58,18 @@ class Ant{
             this.turnLeft();
 
         if(this.dir == 0){
-            this.k -= this.i%2;
+            this.k -= (this.i+1)%2;
             this.i -= 1;
         } else if(this.dir == 1){
-            this.k = this.k-(this.i%2)+1;
+            this.k = this.k-((this.i+1)%2)+1;
             this.i -= 1;
         } else if(this.dir == 2){
             this.k += 1;
         } else if(this.dir == 3){
-            this.k = this.k-(this.i%2)+1;
+            this.k = this.k-((this.i+1)%2)+1;
             this.i += 1;
         } else if(this.dir == 4){
-            this.k -= this.i%2;
+            this.k -= (this.i+1)%2;
             this.i += 1;
         } else if(this.dir == 5){
             this.k -= 1;
@@ -68,11 +77,21 @@ class Ant{
     }
 
     turnLeft(){
-        this.dir = ((this.dir--)+6)%6;
+        this.dir = ((--this.dir)+6)%6;
     }
     
     turnRight(){
-        this.dir = (this.dir++)%6;
+        this.dir = (++this.dir)%6;
+    }
+
+    fix(width, height){
+        this.k = (this.k+width)%width;
+        this.i = (this.i+height)%height;
+    }
+
+    center(cell){
+        this.x = cell.x;
+        this.y = cell.y;
     }
 }
 
@@ -98,12 +117,14 @@ class Grid{
     }
 
     addAnt(x, y, c, d){
-        this.ants.push(new Ant(x,y,c,d));
+        this.ants.push(new Ant(x,y,c,d,this.cells[y][x]));
     }
 
     moveAnts(){
-        for(let i = 0; i < this.ants.length; i++){
-            this.ants[i].move(this.cells[this.ants[i].i][this.ants[i].k]);
+        for(let j = 0; j < this.ants.length; j++){
+            this.ants[j].move(this.cells[this.ants[j].i][this.ants[j].k]);
+            this.ants[j].fix(this.width, this.height);
+            this.ants[j].center(this.cells[this.ants[j].i][this.ants[j].k]);
         }
     }
 
@@ -114,6 +135,9 @@ class Grid{
                 if(this.cells[i][k].toDraw) temp.push(this.cells[i][k]);
             }
         }
+        for(let i = 0; i < this.ants.length; i++){
+            temp.push(this.ants[i]);
+        }
         return temp;
     }
 }
@@ -123,45 +147,39 @@ var ctx = canvas.getContext("2d");
 var defaultColor = "BLACK";
 var grid;
 var interval;
+var width = 115;
+var height = 101;
+var numAnts = 100;
+var Hz = 1000;
+var numSteps = 200;
 
-function fillHexagon(x, y, r){
-    fillPolygon(x,y,r,6);
+function fillHexagon(x, y, r, a){
+    fillPolygon(x,y,r,6,a);
 }
 
-function fillPolygon(x, y, r, s){
+function fillPolygon(x, y, r, s, a){
     ctx.beginPath();
     ctx.moveTo(x,y+r);
     for(let i = s-1; i > -1; i--){
-        ctx.lineTo(x+r*Math.sin(i*2*Math.PI/s), y+r*Math.cos(i*2*Math.PI/s));
+        ctx.lineTo(x+r*Math.cos(i*2*Math.PI/s+a), y+r*Math.sin(i*2*Math.PI/s+a));
     }
 
     ctx.fill();
 }
 
-function drawHexagon(x, y, r){
-    drawPolygon(x, y, r, 6);
-}
-
-function drawPolygon(x, y, r, s){
-    ctx.beginPath();
-    ctx.moveTo(x,y+r);
-    for(let i = s-1; i > -1; i--){
-        ctx.lineTo(x+r*Math.sin(i*2*Math.PI/s), y+r*Math.cos(i*2*Math.PI/s));
-    }
-
-    ctx.stroke();
-}
-
-var width = 55;
-var height = 51;
-
 function main(){
-    grid = new Grid(55,51,10);
-    for(let i = 0; i < 1; i++){
+    grid = new Grid(width, height,5);
+    for(let i = 0; i < numAnts; i++){
         grid.addAnt(Math.floor(Math.random()*width), Math.round(Math.random()*height), getRandomColor());
     }
     clearInterval(interval);
-    interval = setInterval(loop, 1000);
+    interval = setInterval(loop, Hz);
+}
+
+function looploop(){
+    for(let i = 0; i < numSteps; i++){
+        loop();
+    }
 }
 
 function loop(){
