@@ -143,12 +143,14 @@ class Grid{
 }
 
 var canvas = document.getElementById("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
 var defaultColor = "BLACK";
 var grid;
 var interval;
-var width = 40;
-var height = 41;
+var width = 90;
+var height = 81;
 var numAnts = 2;
 var Hz = 60;
 var numSteps = 10;
